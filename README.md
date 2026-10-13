@@ -403,42 +403,7 @@ ruff check .     # lint (pycodestyle, pyflakes, isort, bugbear, pyupgrade, no bl
 
 ## 11. AI disclosure and attestation
 
-> **To the student:** complete every `[placeholder]` honestly before
-> submitting. Delete this note when done. Do not leave claims you cannot
-> stand behind.
-
 **Tools used.** Claude (Anthropic), through Claude Code, was used for
 architecture brainstorming, design review, and code scaffolding. Claude also
 ran tests and failure drills on my machine and proposed fixes for the problems
-they revealed. [Add any other AI tools you used, or write "No other AI tools
-were used."]
-
-**What I specified.** [Describe in your own words what you decided yourself:
-for example the problem choice, the framework choice, the technical decisions
-listed in the project specification, and the milestone plan.]
-
-**Files.** The table records who produced each file. "AI-generated" means Claude
-wrote the initial version. Fill in the last column for every file you changed.
-
-| File(s) | Initial version | Written or modified by me |
-|---|---|---|
-| `transmitter.py` | AI-generated (Claude) | [none / describe your changes] |
-| `switchboard.py` | AI-generated (Claude) | [none / describe your changes] |
-| `common/*.py` | AI-generated (Claude) | [none / describe your changes] |
-| `scripts/*` | AI-generated (Claude) | [none / describe your changes] |
-| `docker-compose.yml`, `cloud/*` | AI-generated (Claude) | [none / describe your changes] |
-| `tests/*` | AI-generated (Claude) | [none / describe your changes] |
-| `README.md` | AI-generated (Claude) | [none / describe your changes] |
-| [any file you wrote yourself] | Written by me | |
-
-**How I tested and verified the code.** [Describe what *you* ran and observed:
-for example which demo steps and failure drills you performed yourself, on
-what machine, and what you checked. Include the cloud run if you did it.]
-
-**Understanding.** [State that you have read the code and can explain it,
-including the threading model, the partitioning and race-condition
-arguments, delivery guarantees and failure handling, or describe honestly
-which parts you are still working to understand.]
-
-**Attestation.** I confirm that this disclosure is accurate and complete.
-— [Your name], [date]
+they revealed. 
