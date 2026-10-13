@@ -1,0 +1,53 @@
+# Single-broker Kafka (KRaft) for a small cloud VM. See cloud/azure_setup.md.
+#
+# The broker must ADVERTISE the address that clients on the internet use to
+# reach it. Clients first contact the bootstrap address, receive the
+# advertised listener in the metadata response, and then connect to *that*.
+# If it said "localhost" or the VM's private 10.x address, every client
+# outside the VM would fail after the first request.
+#
+# Set the public address in a .env file next to this one:
+#     KAFKA_PUBLIC_HOST=20.51.123.45      # the VM's public IP or DNS name
+#     KAFKA_PORT=9092                     # optional
+#
+# Start:  docker compose -f docker-compose.cloud.yml up -d
+# Logs:   docker compose -f docker-compose.cloud.yml logs -f kafka
+#
+# This is ONE broker: no replication and no fault tolerance (topics must be
+# created with --replication-factor 1 --min-isr 1). It demonstrates running
+# over the internet; the 3-broker local cluster demonstrates fault tolerance.
+
+services:
+  kafka:
+    image: apache/kafka:3.9.1
+    container_name: dragonfly-kafka
+    restart: unless-stopped
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+    environment:
+      CLUSTER_ID: "ZHJhZ29uZmx5LWNsb3VkMQ"
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+      KAFKA_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://${KAFKA_PUBLIC_HOST:?set KAFKA_PUBLIC_HOST in .env}:${KAFKA_PORT:-9092}"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+      # Single broker: every replication setting must be 1.
+      KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+      KAFKA_MIN_INSYNC_REPLICAS: "1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      # Cap the JVM so it fits a small VM (B1ms has 2 GB, B2s 4 GB RAM). Kafka
+      # relies on the OS page cache for throughput, so leave memory for it.
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+volumes:
+  kafka-data:
